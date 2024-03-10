@@ -34,6 +34,10 @@ Meant to easily import bank statements, for that all automated feel!</descriptio
 		</developer>
 	</developers>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.xerial</groupId>
