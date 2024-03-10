@@ -78,8 +78,8 @@ Meant to easily import bank statements, for that all automated feel!</descriptio
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>1.21</source>
+					<target>1.21</target>
 				</configuration>
 			</plugin>
 
