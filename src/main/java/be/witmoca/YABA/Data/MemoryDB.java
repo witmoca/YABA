@@ -11,6 +11,7 @@ import java.nio.file.AccessDeniedException;
 import java.nio.file.NoSuchFileException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -172,6 +173,30 @@ public class MemoryDB {
 		}
 
 		// Commit changes
+		db.commit();
+	}
+	
+	/**
+	 * Exposes  java.sql.Connection#prepareStatement(String)
+	 * @see  java.sql.Connection#prepareStatement(String)
+	 */
+	public PreparedStatement prepareStatement(String sql) throws SQLException {
+		return db.prepareStatement(sql);
+	}
+	
+	/**
+	 * Exposes java.sql.Connection#createStatement()
+	 * @see  java.sql.Connection#createStatement()
+	 */
+	public Statement createStatement() throws SQLException {
+		return db.createStatement();
+	}
+	
+	/**
+	 * Exposes java.sql.Connection#commit()
+	 * @see java.sql.Connection#commit()
+	 */
+	public void commit() throws SQLException {
 		db.commit();
 	}
 }
