@@ -50,6 +50,11 @@ Meant to easily import bank statements, for that all automated feel!</descriptio
 			<artifactId>slf4j-simple</artifactId>
 			<version>1.7.36</version>
 		</dependency>
+		<dependency>
+			<groupId>com.formdev</groupId>
+			<artifactId>flatlaf</artifactId>
+			<version>3.4</version>
+		</dependency>
 	</dependencies>
 
 	<build>

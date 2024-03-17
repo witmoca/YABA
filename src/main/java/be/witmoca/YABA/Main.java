@@ -12,7 +12,7 @@ public class Main {
 	public static void main(String[] args) {
 		// Set the look and feel
 		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			UIManager.setLookAndFeel("com.formdev.flatlaf.FlatDarculaLaf");
 		} catch (Exception e) {
 			// Ignore and run with the default L&F on error
 		}
