@@ -1,6 +1,7 @@
 package be.witmoca.YABA.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -42,6 +43,7 @@ public class YabaUI extends JFrame implements WindowListener{
 		
 		// Draw Frame
 		this.setExtendedState(NORMAL);
+		this.setMinimumSize(new Dimension(400,200));
 		this.pack();
 		this.setVisible(true);
 	}
