@@ -9,26 +9,26 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.NoSuchFileException;
-import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
+import org.sqlite.SQLiteCommitListener;
 import org.sqlite.SQLiteConfig;
 import org.sqlite.SQLiteConfig.DateClass;
 import org.sqlite.SQLiteConfig.DatePrecision;
+import org.sqlite.SQLiteConnection;
 
 
 /**
  *
  */
-public class MemoryDB {
+public class MemoryDB implements AutoCloseable{
 	private static final int APPLICATION_ID = 0x59414241; //YABA in hex
 	private static final String EMPTY_DB = "Databases/Default_1.yaba";
 
-	private final Connection db;
+	private final SQLiteConnection db;
 
 	public static MemoryDB createEmpty(File location) throws SQLException, IOException {
 		// Copy the default DB to the new location
@@ -83,7 +83,7 @@ public class MemoryDB {
 		config.setDatePrecision(DatePrecision.SECONDS.getValue()); // Unix Time is in seconds
 
 		// Create connection
-		db = DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath(), config.toProperties());
+		db = (SQLiteConnection) DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath(), config.toProperties());
 		db.setAutoCommit(false);
 		db.commit();
 	}
@@ -177,6 +177,7 @@ public class MemoryDB {
 	}
 	
 	/**
+	 * You are supposed to execute statements by submitting tasks
 	 * Exposes  java.sql.Connection#prepareStatement(String)
 	 * @see  java.sql.Connection#prepareStatement(String)
 	 */
@@ -198,5 +199,14 @@ public class MemoryDB {
 	 */
 	public void commit() throws SQLException {
 		db.commit();
+	}
+	
+	public void close() throws SQLException {
+		// Close the database
+		db.close();
+	}
+	
+	public void addCommitListener(SQLiteCommitListener lstnr) {
+		db.addCommitListener(lstnr);
 	}
 }

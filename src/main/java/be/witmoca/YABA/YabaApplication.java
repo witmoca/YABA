@@ -5,11 +5,11 @@ package be.witmoca.YABA;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.concurrent.ExecutionException;
 
 import be.witmoca.YABA.Data.MemoryDB;
+import be.witmoca.YABA.ui.YabaUI;
 
 /**
  *
@@ -21,14 +21,7 @@ public class YabaApplication {
 		memory = newFile ? MemoryDB.createEmpty(file) : MemoryDB.loadExisting(file);
 	}
 
-	public void StartApplication() throws SQLException, IOException {
-		// dummy test
-		try(Statement s = memory.createStatement()){
-			try(ResultSet rs = s.executeQuery("SELECT name FROM sqlite_schema WHERE type='table' AND name NOT LIKE 'sqlite_%'")){
-				while(rs.next()) {
-					System.out.println(rs.getString(1));
-				}
-			}
-		}
+	public void StartApplication() throws InterruptedException, ExecutionException {
+		YabaUI.show(memory); // Does not return until the app closes
 	}
 }
