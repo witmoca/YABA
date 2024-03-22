@@ -3,23 +3,26 @@ package be.witmoca.YABA.ui;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.IOException;
+
 import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 
 import be.witmoca.YABA.Data.MemoryDB;
-import be.witmoca.YABA.Data.ImportConverters.ArgentaCSV;
+import be.witmoca.YABA.Data.ImportConverters.ArgentaXLSX;
 import be.witmoca.YABA.Data.ImportConverters.ImportConverter;
 
 public class ImporterPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
 	// List of all the possible Import converters
-	private final ImportConverter[] converterChoices = {new ArgentaCSV()};
+	private final ImportConverter[] converterChoices = {new ArgentaXLSX()};
 	private final JLabel fileToLoadLabel = new JLabel ("Select file to load");
 	private final JButton importButton;
 	private final MemoryDB memory;
@@ -91,7 +94,15 @@ public class ImporterPanel extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			chosenConverter.Import(chosenFile, memory);
+			int count = 0;
+			try {
+				count = chosenConverter.Import(chosenFile, memory);
+			} catch (IOException e1) {
+				JOptionPane.showMessageDialog(ImporterPanel.this, e1.getMessage() + "", "Error", JOptionPane.ERROR_MESSAGE);
+				e1.printStackTrace();
+			}
+			
+			JOptionPane.showMessageDialog(ImporterPanel.this, "Import ok. Amount of lines imported: " + count);
 		}
 	}
 }

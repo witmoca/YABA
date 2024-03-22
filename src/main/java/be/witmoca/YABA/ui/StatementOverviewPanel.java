@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
@@ -19,11 +20,11 @@ import be.witmoca.YABA.Data.TransactionStatement;
 
 public class StatementOverviewPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
-	private static final String[] TABLE_HEADERS = {"Date/Time","Amount","Description","Originating Account","Receiving Account"};
+	private static final String[] TABLE_HEADERS = {"Date/Time","Amount","Description","Own Account","Counterparty Account"};
 
 	public StatementOverviewPanel(MemoryDB memory) {
 		super(new BorderLayout());
-		this.add(new JTable(new StatementTableModel(memory)));
+		this.add(new JScrollPane(new JTable(new StatementTableModel(memory))));
 	}
 	
 	private class StatementTableModel implements TableModel, SQLiteCommitListener {
@@ -31,7 +32,7 @@ public class StatementOverviewPanel extends JPanel {
 		private final List<TableModelListener> tableListeners= new ArrayList<TableModelListener>();
 		private final Object contentLock = new Object();
 		
-		private List<TransactionStatement> content;
+		private List<TransactionStatement> content = new ArrayList<>();
 		
 		private StatementTableModel(MemoryDB memory) {
 			this.memory = memory;
@@ -42,14 +43,15 @@ public class StatementOverviewPanel extends JPanel {
 		// SQLiteCommitListener interface (fires outside of EDT!)
 		@Override
 		public void onCommit() {
-			synchronized(contentLock) {
-				this.content = TransactionStatement.getAll(memory);				
-			}
-			
 			// Fire the 'content has updated' event on the EDT
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
+					// Get the new content -> Important that this called 'later', not while commit is happen (select statements are not allowed while the event is fired)
+					synchronized(contentLock) {
+						StatementTableModel.this.content = TransactionStatement.getAll(memory);				
+					}
+					
 					synchronized (tableListeners) {
 						for(TableModelListener l : tableListeners)
 							l.tableChanged(new TableModelEvent(StatementTableModel.this));
@@ -87,7 +89,7 @@ public class StatementOverviewPanel extends JPanel {
 				case 0: 
 					return Date.class;
 				case 1:
-					return Double.class;
+					return Integer.class;
 				default: return String.class;
 			}
 		}
@@ -100,7 +102,7 @@ public class StatementOverviewPanel extends JPanel {
 		@Override
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			synchronized(contentLock) {
-				return content.get(rowIndex).getValueAt(columnIndex);
+				return content.get(rowIndex).getDisplayValueAt(columnIndex);
 			}
 		}
 	
